@@ -22,8 +22,11 @@
 \usepackage{todonotes}
 \setuptodonotes{inline}  % CUSTOMIZACE TODONOTES
 \usepackage{bm}
+\usepackage{xcolor}         % typesetting in color
 
 %%%%%% my own macros section %%%%%%%%%%%%%%%%%%%%%
+\newcommand{\red}[1]{\textcolor{red!}{#1}}
+
 \newcommand{\R}{\mathbb{R}}
 \newcommand{\N}{\mathbb{N}}
 \newcommand{\Z}{\mathbb{Z}}
@@ -102,8 +105,9 @@
 \begin{frame}
 \frametitle{Overview}
 \begin{itemize}
-\item What are the important things about the thesis
-\item etc.
+    \item Polynomial Commitment Schemes (PCSs)
+    \item Algebraic Group Model (AGM)
+    \item Algebraic Group Model with Oblivious Sampling (AGMOS)
 \end{itemize}
 \end{frame}
 
@@ -118,7 +122,7 @@
     \]
     \item $ p $ a prime %, $ \F = \Z_p $
     \item $ (\G_1, +) $, $ (\G_2, +) $, $ (\G_T, +) $ cyclic groups of order $ p $
-    \item $ \e \colon \G_1 \times \G_2 \to \G_T $ a \textit{pairing}, i.e., a non-degenerate, efficiently computable bilinear map \todo{todo: use only $ a \bullet b $ notation?}
+    \item $ \bullet \colon \G_1 \times \G_2 \to \G_T $, $ (g, h) \mapsto g \bullet h $ a \textit{pairing}, i.e., a non-degenerate, efficiently computable bilinear map
     \item For $ \kappa \in \{ 1, 2, T \} $, $ a \in \F $ and $ \mathbb b \in \F^n $, let $ [a]_\kappa = a[1]_\kappa \in \G_\kappa $, 
     \[ 
     [\mathbb b]_\kappa = [b_1, \dots, b_n]_\kappa = ([b_1]_\kappa, \dots, [b_n]_\kappa) \in \G_\kappa^n
@@ -131,20 +135,19 @@
 
 \begin{frame}
 \frametitle{Polynomial Commitment Schemes (PCSs)}
-\todo{todo: enlarge, move things around}
     \includegraphics[width=10cm]{pcs-definition.pdf}
 \end{frame}
 
 
 \begin{frame}
 \frametitle{Kate-Zaverucha-Goldberg (KZG)}
-    
+    \includegraphics[width=10cm]{kzg.pdf}
 \end{frame}
 
 
 \begin{frame}
 \frametitle{Security properties of PCSs}
-\todo{still too long?}
+\todo{too long?}
 \begin{definition}
     A PCS is \emph{evaluation binding} if for any $ n \in \poly(\lambda) $ and PPT adversary $ \A $, 
     $$
@@ -168,9 +171,10 @@ Intuition: a successful prover must be ``thinking of $ f(X) $ in its head''.
 
 
 \begin{frame}
-\frametitle{Algebraic Group Model}
+\frametitle{Algebraic Group Model (AGM)}
 \todo{do I have to mention GGM?}
 \begin{itemize}
+    \item Fuchsbauer, Kiltz, and Loss, 2017
     \item Every PPT adversary is \textit{algebraic}:
     $$
     \A(\gp, [\mathbb x_1]_1, [\mathbb x_2]_2) \to (([\mathbb y_1]_1, \bm \gamma_1), ([\mathbb y_2]_2, \bm \gamma_2)),
@@ -189,7 +193,18 @@ Intuition: a successful prover must be ``thinking of $ f(X) $ in its head''.
 
 \begin{frame}
 \frametitle{Extractability in the AGM}
-\todo{todo: show for KZG...}
+In the AGM,
+\[
+\A(\ck) \to ((C, \bm \gamma_C), \alpha, \eta, (\pi, \bm \gamma_\pi)),
+\]
+where 
+\[
+C = \sum_{i=0}^n {\gamma_C}_i [x^i]_1 = 
+\left[ \sum_{i=0}^n {\gamma_C}_i x^i \right]_1 = 
+\Com(\ck, f)
+\]
+for $ f(X) = \sum_{i=0}^n {\gamma_C}_i X^i $.
+
 Building on the ideas of P.\ Chmel, C.\ Hoffmann and P.\ Hubáček:
 \begin{theorem}[informal]
 In the AGM, if a ``\textbf{KZG-like}'' PCS is evaluation binding, then it is extractable.
@@ -199,8 +214,134 @@ Conclusion: the AGM is likely not suitable for proving extractability.
 
 
 \begin{frame}
+\frametitle{Algebraic Group Model with Oblivious Sampling (AGMOS)}
+\todo{todo: zopakovat slide bez červené barvy?}
+\begin{itemize}
+    \item Lipmaa, Parisella, and Siim, 2023 [LPS23]
+    \item Oblivious sampling oracle $ \Oracle(\kappa, E, D) \to [q]_\kappa \in \G_\kappa $, where $ \kappa \in \{ 1, 2 \} $.
+    \item \(
+    \A^{\red{\Oracle}}(\gp, [\mathbb x_1]_1, [\mathbb x_2]_2) \to
+    ([\mathbb y_\kappa]_\kappa, \bm \gamma_\kappa, \red{\bm \delta_\kappa}, \red{[\mathbb q_\kappa]_\kappa})_{\kappa=1}^2
+    \), where $ \bm{\gamma}_\kappa $, $ \red{\bm{\delta}_\kappa} $ are matrices over $ \F $, and it holds that 
+    \begin{equation*}
+    \mathbb y_\kappa = \bm{\gamma}_\kappa \mathbb x_\kappa \red{+ \bm \delta_\kappa \mathbb q_\kappa}, \quad 
+    \kappa \in \{ 1, 2 \}.
+    \end{equation*}
+\end{itemize}   
+\end{frame}
+
+
+\begin{frame}
+\frametitle{TOFR, FPR assumptions}
+\begin{definition}[informal]
+    The \emph{Tensor Oracle Find Representation (TOFR)} assumption holds if, for any PPT adversary $ \A $, which receives $ [\mathbb q_1]_1 $, $ [\mathbb q_2]_2 $ from the AGMOS oracle $ \Oracle $, it is ``difficult'' to find $ \bm v \neq \bm 0 $ such that
+    \[
+    \bm v^T 
+    \begin{pmatrix}
+         1 \\
+         \mathbb q_1 \\
+         \mathbb q_2 \\
+         \mathbb q_1 \otimes \mathbb q_2
+    \end{pmatrix}
+    = 0.
+    \]
+\end{definition}
+Find Polynomial Representation (FPR) oracle: $ \bm x \gets \F^m $, 
+\[ 
+\Oracle^\fpr(\bm x, \kappa, f(\bm X)) \to [f(\bm x)]_\kappa.
+\]
+\begin{definition}[informal]
+    The \textit{FPR assumption} holds if, for any PPT adversary $ \A $ with access to the FPR oracle $ \Oracle^\fpr $, it is ``difficult'' to find $ 0 \neq g(\bm X) $ below a certain degree such that $ g(\bm x) = 0 $.
+\end{definition}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{AGMOS security game structure}
+\begin{itemize}
+    \item Trapdoors: $ \bm x \gets \F^m $; formal variables 
+    \item Adversary:
+    \[
+    \A^\Oracle(\gp, [\mathbb x_1(\bm x)]_1, [\mathbb x_2(\bm x)]_2) \to
+    (([\mathbb y_\kappa]_\kappa, \bm \gamma_\kappa, \bm \delta_\kappa, [\mathbb q_\kappa]_\kappa)_{\kappa=1}^2, \bm \alpha),
+    \]
+    where $ \mathbb x_\kappa(\bm X) \in \F[\bm X]^{\il_\kappa} $, $ \bm \alpha \in \F^m $, 
+    \[
+    \mathbb y_\kappa = \bm{\gamma}_\kappa \mathbb x_\kappa(\bm x) + \bm \delta_\kappa \mathbb q_\kappa, \quad 
+    \kappa \in \{ 1, 2 \}.
+    \]
+    \item Verification (using pairing):
+    \[
+        \begin{pmatrix}
+           \mathbb x_1(\bm x) \\
+           \mathbb y_1
+        \end{pmatrix}^T
+        \bm M
+        \begin{pmatrix}
+           \mathbb x_2(\bm x) \\
+           \mathbb y_2
+        \end{pmatrix} \overset{?}{=} 0.
+    \]
+    Equivalently, $ V(\bm x, \mathbb q) = 0 $ for a certain polynomial
+    \[
+    V(\bm X, \mathbb Q) = V^h(\bm X) + V^t(\bm X, \mathbb Q).
+    \]
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Main theorem}
+Proving that an assumption holds/an algorithm is secure/\dots in the AGMOS. [LPS23] Proof technique:
+\begin{itemize}
+    \item Case \caseA: $ V(\bm X, \mathbb Q) = 0 $. Impossible, or, for example, the extractor wins.
+    \item Case \caseXone: $ V(\bm X, \mathbb Q) \neq 0 $, but $ V^t(\bm X, \mathbb Q) = 0 $. Reduces to FPR.
+    \item Case \caseXtwo: $ V^t(\bm X, \mathbb Q) \neq 0 $, but $ V^t(\bm x, \mathbb Q) = 0 $. Reduces (differently) to FPR.
+    \item Case \caseQ: $ V^t(\bm x, \mathbb Q) \neq 0 $. Reduces to TOFR.
+\end{itemize}
+AGM: only cases \caseA \ and \caseXone, since $ V^t(\bm X, \mathbb Q) = 0 $.
+\begin{theorem}[informal]
+    In the aforementioned AGMOS security game, if $ \A $ passes the verification and the TOFR and FPR assumptions hold, then $ V^t(\bm X, \mathbb Q) = 0 $ with overwhelming probability.
+\end{theorem}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{AGM to AGMOS ``lifting''}
+If $ \A $ outputs $ \bm \delta = (\bm \delta_1, \bm \delta_2) = \bm 0 $, then it is ``basically'' an AGM adversary:
+\[
+\mathbb y_\kappa = 
+\bm{\gamma}_\kappa \mathbb x_\kappa(\bm x) + \bm \delta_\kappa \mathbb q_\kappa = 
+\bm{\gamma}_\kappa \mathbb x_\kappa(\bm x), \quad 
+\kappa \in \{ 1, 2 \}
+\]
+Thanks to the main theorem, it remains to show that
+\[
+V^t(\bm X, \mathbb Q) = 0 \quad \text{implies} \quad
+\bm \delta = \bm 0.
+\]
+LHS is equivalent to a system of polynomial equations which are at most quadratic in $ \bm \delta $. 
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Conclusion (OR SUMMARY?)}
+\begin{itemize}
+    \item In the AGM, for ``KZG-like'' PCSs, evaluation binding implies extractability. The AGM may not be suitable for proving extractability.
+    \item Given an AGM proof of security, extending it to the AGMOS is partially automatized by our main theorem.
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
 \frametitle{The end}
 Thank you for your attention.
+\end{frame}
+
+
+\begin{frame}
+\frametitle{???????????????????????????????????????????}
+    \todo{Reactions to opponent's review go here.}
 \end{frame}
 
 
