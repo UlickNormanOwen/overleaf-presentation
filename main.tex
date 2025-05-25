@@ -118,13 +118,14 @@
 \frametitle{Preliminaries}
 \begin{itemize}
     \item $ (\G_1, +) $, $ (\G_2, +) $, $ (\G_T, +) $ cyclic groups of prime order $ p $.
-    \item $ \bullet $ a \textit{pairing}, i.e., a non-degenerate, efficiently computable bilinear map:
-    \[
-    \bullet \colon \G_1 \times \G_2 \to \G_T, \quad (g, h) \mapsto g \bullet h.
-    \]
+    \item $ [1]_\kappa $ a fixed generator of $ \G_\kappa $, $ \kappa \in \{ 1, 2, T \} $.
     \item For $ \kappa \in \{ 1, 2, T \} $ and $ a \in \F_p $, let 
     \[
     [a]_\kappa = a[1]_\kappa \in \G_\kappa.
+    \]
+    \item $ \bullet $ a \textit{pairing}, i.e., a non-degenerate, efficiently computable bilinear map:
+    \[
+    \bullet \colon \G_1 \times \G_2 \to \G_T, \quad (g, h) \mapsto g \bullet h.
     \]
 \end{itemize}
 \end{frame}
@@ -198,16 +199,36 @@ Conclusion: the AGM is likely not suitable for proving extractability.
 
 \begin{frame}
 \frametitle{Algebraic Group Model with Oblivious Sampling (AGMOS)}
-\todo{todo: zopakovat slide bez červené barvy?}
+\todo{todo: všechny úpravy zanést i do druhého slidu}
 \begin{itemize}
     \item Lipmaa, Parisella, and Siim, 2023 [LPS23].
-    \item Oblivious sampling oracle $ \Oracle(\kappa, E, D) \to [q]_\kappa \in \G_\kappa $, where $ \kappa \in \{ 1, 2 \} $.
+    \item Oblivious sampling---e.g., using \emph{admissible encodings} [BF03, SW06].
+    \item Oracle $ \Oracle(\kappa, E, D) \to [q]_\kappa \in \G_\kappa $, $ \kappa \in \{ 1, 2 \} $.
     \item \(
     \A^{\red{\Oracle}}([\mathbb x_1]_1, [\mathbb x_2]_2) \to
     ([\mathbb y_\kappa]_\kappa, \bm \gamma_\kappa, \red{\bm \delta_\kappa}, \red{[\mathbb q_\kappa]_\kappa})_{\kappa=1}^2
     \), where $ \bm{\gamma}_\kappa $, $ \red{\bm{\delta}_\kappa} $ are matrices over $ \F_p $, and it holds that 
     \begin{equation*}
-    \mathbb y_\kappa = \bm{\gamma}_\kappa \mathbb x_\kappa \red{+ \bm \delta_\kappa \mathbb q_\kappa}, \quad 
+    \mathbb y_\kappa = \bm{\gamma}_\kappa \mathbb x_\kappa \red{\,+\, \bm \delta_\kappa \mathbb q_\kappa}, \quad 
+    \kappa \in \{ 1, 2 \}.
+    \end{equation*}
+\end{itemize}   
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Algebraic Group Model with Oblivious Sampling (AGMOS)}
+\todo{todo: všechny úpravy zanést i do druhého slidu}
+\begin{itemize}
+    \item Lipmaa, Parisella, and Siim, 2023 [LPS23].
+    \item Oblivious sampling---e.g., using \emph{admissible encodings} [BF03, SW06].
+    \item Oracle $ \Oracle(\kappa, E, D) \to [q]_\kappa \in \G_\kappa $, $ \kappa \in \{ 1, 2 \} $.
+    \item \(
+    \A^{\Oracle}([\mathbb x_1]_1, [\mathbb x_2]_2) \to
+    ([\mathbb y_\kappa]_\kappa, \bm \gamma_\kappa, \bm \delta_\kappa, [\mathbb q_\kappa]_\kappa)_{\kappa=1}^2
+    \), where $ \bm{\gamma}_\kappa $, $ \bm{\delta}_\kappa $ are matrices over $ \F_p $, and it holds that 
+    \begin{equation*}
+    \mathbb y_\kappa = \bm{\gamma}_\kappa \mathbb x_\kappa + \bm \delta_\kappa \mathbb q_\kappa, \quad 
     \kappa \in \{ 1, 2 \}.
     \end{equation*}
 \end{itemize}   
@@ -246,9 +267,9 @@ Find Polynomial Representation (FPR) oracle: $ \bm x \gets \F_p^m $,
     \item Adversary:
     \[
     \A^\Oracle([\mathbb x_1(\bm x)]_1, [\mathbb x_2(\bm x)]_2) \to
-    (([\mathbb y_\kappa]_\kappa, \bm \gamma_\kappa, \bm \delta_\kappa, [\mathbb q_\kappa]_\kappa)_{\kappa=1}^2, \bm \alpha),
+    ([\mathbb y_\kappa]_\kappa, \bm \gamma_\kappa, \bm \delta_\kappa, [\mathbb q_\kappa]_\kappa)_{\kappa=1}^2,
     \]
-    where $ \mathbb x_\kappa(\bm X) \in \F_p[\bm X]^{\il_\kappa} $, $ \bm \alpha \in \F_p^m $, 
+    where $ \mathbb x_\kappa(\bm X) \in \F_p[\bm X]^{\il_\kappa} $, 
     \[
     \mathbb y_\kappa = \bm{\gamma}_\kappa \mathbb x_\kappa(\bm x) + \bm \delta_\kappa \mathbb q_\kappa, \quad 
     \kappa \in \{ 1, 2 \}.
@@ -310,13 +331,13 @@ The left equality is equivalent to a system of polynomial equations, which are a
 \begin{frame}
 \frametitle{Conclusion}
 \begin{itemize}
-    \item Polynomial Commitment Schemes (PCSs), security properties.
-    \item Algebraic Group Model (AGM).
-    \item AGMOS---adding oblivious sampling.
-    \item Our main results:
+    \item Polynomial Commitment Schemes (PCSs), KZG, security properties.
+    \item Algebraic Group Model (AGM, [FKL18]).
+    \item AGMOS [LPS23]---adds oblivious sampling.
+    \item Our results:
     \begin{enumerate}
-        \item In the AGM, for ``KZG-like'' PCSs, evaluation binding implies extractability. The AGM may not be suitable for proving extractability.
-        \item Given an AGM proof of security, extending it to the AGMOS is partially automatized by our main theorem.
+        \item In the AGM, for ``KZG-like'' PCSs, evaluation binding implies extractability.
+        \item Given an AGM proof of security, ``lifting'' it to the AGMOS is partially automatized by our main theorem.
     \end{enumerate}
 \end{itemize}
 \vfill
@@ -326,6 +347,12 @@ Thank you for your attention.
 
 \begin{frame}
 \frametitle{References}
+\begin{itemize}
+    \item[{[}BF03{]}] Boneh, Dan; Franklin, Matthew K. Identity-Based Encryption from the Weil Pairing. SIAM J. Comput. 2003, vol. 32, no. 3, pp. 586–615.
+    \item[{[}FKL18{]}] Fuchsbauer, Georg; Kiltz, Eike; Loss, Julian. The Algebraic Group Model and its Applications. In: Shacham, Hovav; Boldyreva, Alexandra (eds.). Advances in Cryptology - CRYPTO 2018 - 38th Annual International Cryptology Conference, Santa Barbara, CA, USA, August 19-23, 2018, Proceedings, Part II. Springer, 2018, vol. 10992, pp. 33–62. Lecture Notes in Computer Science.
+    \item[{[}LPS23{]}] Lipmaa, Helger; Parisella, Roberto; Siim, Janno. Algebraic Group Model with Oblivious Sampling. In: Rothblum, Guy N.; Wee, Hoeteck (eds.). Theory of Cryptography - 21st International Conference, TCC 2023, Taipei, Taiwan, November 29 - December 2, 2023, Proceedings, Part IV. Springer, 2023, vol. 14372, pp. 363–392. Lecture Notes in Computer Science.
+    \item[{[}SW06{]}] Shallue, Andrew; Woestijne, Christiaan E. van de. Construction of Rational Points on Elliptic Curves over Finite Fields. In: Hess, Florian; Pauli, Sebastian; Pohst, Michael E. (eds.). Algorithmic Number Theory, 7th International Symposium, ANTS-VII, Berlin, Germany, July 23-28, 2006, Proceedings. Springer, 2006, vol. 4076, pp. 510–524. Lecture Notes in Computer Science.
+\end{itemize}
 \end{frame}
 
 
