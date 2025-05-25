@@ -24,6 +24,8 @@
 \usepackage{bm}
 \usepackage{xcolor}         % typesetting in color
 
+\setbeamertemplate{footline}[frame number]
+
 %%%%%% my own macros section %%%%%%%%%%%%%%%%%%%%%
 \newcommand{\red}[1]{\textcolor{red!}{#1}}
 
@@ -115,20 +117,15 @@
 \begin{frame}
 \frametitle{Preliminaries}
 \begin{itemize}
-    \item Security parameter $ \lambda $
-    \item Group parameters 
+    \item $ (\G_1, +) $, $ (\G_2, +) $, $ (\G_T, +) $ cyclic groups of prime order $ p $.
+    \item $ \bullet $ a \textit{pairing}, i.e., a non-degenerate, efficiently computable bilinear map:
     \[
-    \Pgen(1^\lambda) \to \gp = (p, \G_1, \G_2, \G_T, [1]_1, [1]_2, [1]_T, \hat e)
+    \bullet \colon \G_1 \times \G_2 \to \G_T, \quad (g, h) \mapsto g \bullet h.
     \]
-    \item $ p $ a prime %, $ \F = \Z_p $
-    \item $ (\G_1, +) $, $ (\G_2, +) $, $ (\G_T, +) $ cyclic groups of order $ p $
-    \item $ \bullet \colon \G_1 \times \G_2 \to \G_T $, $ (g, h) \mapsto g \bullet h $ a \textit{pairing}, i.e., a non-degenerate, efficiently computable bilinear map
-    \item For $ \kappa \in \{ 1, 2, T \} $, $ a \in \F $ and $ \mathbb b \in \F^n $, let $ [a]_\kappa = a[1]_\kappa \in \G_\kappa $, 
-    \[ 
-    [\mathbb b]_\kappa = [b_1, \dots, b_n]_\kappa = ([b_1]_\kappa, \dots, [b_n]_\kappa) \in \G_\kappa^n
+    \item For $ \kappa \in \{ 1, 2, T \} $ and $ a \in \F_p $, let 
+    \[
+    [a]_\kappa = a[1]_\kappa \in \G_\kappa.
     \]
-    \todo{maybe only mention negligible fn when it is used (once)?}
-    \item A \textit{negligible function} approaches $ 0 $ faster than any inverse polynomial: $ \phi(\lambda) \negligible $
 \end{itemize}
 \end{frame}
 
@@ -147,39 +144,25 @@
 
 \begin{frame}
 \frametitle{Security properties of PCSs}
-\todo{too long?}
-\begin{definition}
-    A PCS is \emph{evaluation binding} if for any $ n \in \poly(\lambda) $ and PPT adversary $ \A $, 
-    $$
-    \probability{
-    & \V(\ck, C, \alpha, \eta, \pi) = 1 \; \land \\ 
-    & \V(\ck, C, \alpha, \eta', \pi') = 1 \; \land \\ 
-    & \; \eta \neq \eta'
-    }{
-    & \gp \leftarrow \Pgen(1^\lambda); \ck \leftarrow \KGen(\gp, n); \\
-    & (C, \alpha, \eta, \pi, \eta', \pi') \leftarrow \A(\ck)
-    }
-    \negligible.
-    $$
-\end{definition}
-Intuition: it is hard to prove the nonsensical claim that $ \eta = f(\alpha) = \eta' \neq \eta $.
-\begin{definition}[informal]
-    A PCS is \textit{extractable} if, for every PPT adversary $ \A $, there exists a PPT \textit{extractor} $ \Ext_{\A} $ satisfying the following. If $ \A $'s output passes the PCS verification, then $ \Ext_\A $, given ``access'' to $ \A $, ``extracts'' the committed polynomial $ f(X) $.
-\end{definition}
-Intuition: a successful prover must be ``thinking of $ f(X) $ in its head''.
+$ \A $ is a PPT adversary.
+
+\begin{itemize}
+    \item Evaluation binding: it is ``hard'' for $ \A $ to prove the nonsensical claim that $ \eta = f(\alpha) = \eta' \neq \eta $.
+    \item Extractability:\\
+    \includegraphics[width=8cm]{extractability.pdf}
+\end{itemize}
 \end{frame}
 
 
 \begin{frame}
 \frametitle{Algebraic Group Model (AGM)}
-\todo{do I have to mention GGM?}
 \begin{itemize}
-    \item Fuchsbauer, Kiltz, and Loss, 2017
+    \item Fuchsbauer, Kiltz, and Loss, 2017.
     \item Every PPT adversary is \textit{algebraic}:
     $$
-    \A(\gp, [\mathbb x_1]_1, [\mathbb x_2]_2) \to (([\mathbb y_1]_1, \bm \gamma_1), ([\mathbb y_2]_2, \bm \gamma_2)),
+    \A([\mathbb x_1]_1, [\mathbb x_2]_2) \to (([\mathbb y_1]_1, \bm \gamma_1), ([\mathbb y_2]_2, \bm \gamma_2)),
     $$
-    where $ \bm{\gamma}_1 $, $ \bm{\gamma}_2 $ are matrices over $ \F $, and it holds that 
+    where $ \bm{\gamma}_1 $, $ \bm{\gamma}_2 $ are matrices over $ \F_p $, and it holds that 
     \begin{equation*}
     \mathbb y_1 = \bm{\gamma}_1 \mathbb x_1, \quad 
     \mathbb y_2 = \bm{\gamma}_2 \mathbb x_2. 
@@ -193,9 +176,9 @@ Intuition: a successful prover must be ``thinking of $ f(X) $ in its head''.
 
 \begin{frame}
 \frametitle{Extractability in the AGM}
-In the AGM,
+KZG extractability game in the AGM:
 \[
-\A(\ck) \to ((C, \bm \gamma_C), \alpha, \eta, (\pi, \bm \gamma_\pi)),
+\A(\ck) \to (C, \bm \gamma_C),
 \]
 where 
 \[
@@ -205,7 +188,7 @@ C = \sum_{i=0}^n {\gamma_C}_i [x^i]_1 =
 \]
 for $ f(X) = \sum_{i=0}^n {\gamma_C}_i X^i $.
 
-Building on the ideas of P.\ Chmel, C.\ Hoffmann and P.\ Hubáček:
+Formalizing ideas suggested by P.\ Chmel, C.\ Hoffmann, and P.\ Hubáček:
 \begin{theorem}[informal]
 In the AGM, if a ``\textbf{KZG-like}'' PCS is evaluation binding, then it is extractable.
 \end{theorem}
@@ -217,12 +200,12 @@ Conclusion: the AGM is likely not suitable for proving extractability.
 \frametitle{Algebraic Group Model with Oblivious Sampling (AGMOS)}
 \todo{todo: zopakovat slide bez červené barvy?}
 \begin{itemize}
-    \item Lipmaa, Parisella, and Siim, 2023 [LPS23]
+    \item Lipmaa, Parisella, and Siim, 2023 [LPS23].
     \item Oblivious sampling oracle $ \Oracle(\kappa, E, D) \to [q]_\kappa \in \G_\kappa $, where $ \kappa \in \{ 1, 2 \} $.
     \item \(
-    \A^{\red{\Oracle}}(\gp, [\mathbb x_1]_1, [\mathbb x_2]_2) \to
+    \A^{\red{\Oracle}}([\mathbb x_1]_1, [\mathbb x_2]_2) \to
     ([\mathbb y_\kappa]_\kappa, \bm \gamma_\kappa, \red{\bm \delta_\kappa}, \red{[\mathbb q_\kappa]_\kappa})_{\kappa=1}^2
-    \), where $ \bm{\gamma}_\kappa $, $ \red{\bm{\delta}_\kappa} $ are matrices over $ \F $, and it holds that 
+    \), where $ \bm{\gamma}_\kappa $, $ \red{\bm{\delta}_\kappa} $ are matrices over $ \F_p $, and it holds that 
     \begin{equation*}
     \mathbb y_\kappa = \bm{\gamma}_\kappa \mathbb x_\kappa \red{+ \bm \delta_\kappa \mathbb q_\kappa}, \quad 
     \kappa \in \{ 1, 2 \}.
@@ -233,8 +216,8 @@ Conclusion: the AGM is likely not suitable for proving extractability.
 
 \begin{frame}
 \frametitle{TOFR, FPR assumptions}
-\begin{definition}[informal]
-    The \emph{Tensor Oracle Find Representation (TOFR)} assumption holds if, for any PPT adversary $ \A $, which receives $ [\mathbb q_1]_1 $, $ [\mathbb q_2]_2 $ from the AGMOS oracle $ \Oracle $, it is ``difficult'' to find $ \bm v \neq \bm 0 $ such that
+\begin{definition}[TOFR; informal]
+    The \emph{Tensor Oracle Find Representation (TOFR)} assumption holds if, for any PPT adversary $ \A $, which receives $ [\mathbb q_1]_1 $, $ [\mathbb q_2]_2 $ from the AGMOS oracle $ \Oracle $, it is ``hard'' to find $ \bm v \neq \bm 0 $ such that
     \[
     \bm v^T 
     \begin{pmatrix}
@@ -246,12 +229,12 @@ Conclusion: the AGM is likely not suitable for proving extractability.
     = 0.
     \]
 \end{definition}
-Find Polynomial Representation (FPR) oracle: $ \bm x \gets \F^m $, 
+Find Polynomial Representation (FPR) oracle: $ \bm x \gets \F_p^m $, 
 \[ 
-\Oracle^\fpr(\bm x, \kappa, f(\bm X)) \to [f(\bm x)]_\kappa.
+\Oracle^\fpr(\bm x, \kappa, f(\bm X)) \to [f(\bm x)]_\kappa \in \G_\kappa.
 \]
-\begin{definition}[informal]
-    The \textit{FPR assumption} holds if, for any PPT adversary $ \A $ with access to the FPR oracle $ \Oracle^\fpr $, it is ``difficult'' to find $ 0 \neq g(\bm X) $ below a certain degree such that $ g(\bm x) = 0 $.
+\begin{definition}[FPR; informal]
+    The \textit{FPR assumption} holds if, for any PPT adversary $ \A $ with access to the FPR oracle $ \Oracle^\fpr $, it is ``hard'' to find $ 0 \neq g(\bm X) $ below a certain degree such that $ g(\bm x) = 0 $.
 \end{definition}
 \end{frame}
 
@@ -259,13 +242,13 @@ Find Polynomial Representation (FPR) oracle: $ \bm x \gets \F^m $,
 \begin{frame}
 \frametitle{AGMOS security game structure}
 \begin{itemize}
-    \item Trapdoors: $ \bm x \gets \F^m $; formal variables 
+    \item Trapdoors: $ \bm x \gets \F_p^m $.
     \item Adversary:
     \[
-    \A^\Oracle(\gp, [\mathbb x_1(\bm x)]_1, [\mathbb x_2(\bm x)]_2) \to
+    \A^\Oracle([\mathbb x_1(\bm x)]_1, [\mathbb x_2(\bm x)]_2) \to
     (([\mathbb y_\kappa]_\kappa, \bm \gamma_\kappa, \bm \delta_\kappa, [\mathbb q_\kappa]_\kappa)_{\kappa=1}^2, \bm \alpha),
     \]
-    where $ \mathbb x_\kappa(\bm X) \in \F[\bm X]^{\il_\kappa} $, $ \bm \alpha \in \F^m $, 
+    where $ \mathbb x_\kappa(\bm X) \in \F_p[\bm X]^{\il_\kappa} $, $ \bm \alpha \in \F_p^m $, 
     \[
     \mathbb y_\kappa = \bm{\gamma}_\kappa \mathbb x_\kappa(\bm x) + \bm \delta_\kappa \mathbb q_\kappa, \quad 
     \kappa \in \{ 1, 2 \}.
@@ -292,7 +275,7 @@ Find Polynomial Representation (FPR) oracle: $ \bm x \gets \F^m $,
 
 \begin{frame}
 \frametitle{Main theorem}
-Proving that an assumption holds/an algorithm is secure/\dots in the AGMOS. [LPS23] Proof technique:
+Proving that an assumption holds/an algorithm is secure/\dots in the AGMOS. [LPS23] proof technique:
 \begin{itemize}
     \item Case \caseA: $ V(\bm X, \mathbb Q) = 0 $. Impossible, or, for example, the extractor wins.
     \item Case \caseXone: $ V(\bm X, \mathbb Q) \neq 0 $, but $ V^t(\bm X, \mathbb Q) = 0 $. Reduces to FPR.
@@ -308,29 +291,41 @@ AGM: only cases \caseA \ and \caseXone, since $ V^t(\bm X, \mathbb Q) = 0 $.
 
 \begin{frame}
 \frametitle{AGM to AGMOS ``lifting''}
-If $ \A $ outputs $ \bm \delta = (\bm \delta_1, \bm \delta_2) = \bm 0 $, then it is ``basically'' an AGM adversary:
+If an AGMOS adversary $ \A $ outputs $ \bm \delta = (\bm \delta_1, \bm \delta_2) = \bm 0 $, then it is ``basically'' an AGM adversary:
 \[
 \mathbb y_\kappa = 
 \bm{\gamma}_\kappa \mathbb x_\kappa(\bm x) + \bm \delta_\kappa \mathbb q_\kappa = 
 \bm{\gamma}_\kappa \mathbb x_\kappa(\bm x), \quad 
-\kappa \in \{ 1, 2 \}
+\kappa \in \{ 1, 2 \}.
 \]
 Thanks to the main theorem, it remains to show that
 \[
 V^t(\bm X, \mathbb Q) = 0 \quad \text{implies} \quad
 \bm \delta = \bm 0.
 \]
-LHS is equivalent to a system of polynomial equations which are at most quadratic in $ \bm \delta $. 
+The left equality is equivalent to a system of polynomial equations, which are at most quadratic in $ \bm \delta $. 
 \end{frame}
 
 
 \begin{frame}
 \frametitle{Conclusion}
 \begin{itemize}
-    \item In the AGM, for ``KZG-like'' PCSs, evaluation binding implies extractability. The AGM may not be suitable for proving extractability.
-    \item Given an AGM proof of security, extending it to the AGMOS is partially automatized by our main theorem.
+    \item Polynomial Commitment Schemes (PCSs), security properties.
+    \item Algebraic Group Model (AGM).
+    \item AGMOS---adding oblivious sampling.
+    \item Our main results:
+    \begin{enumerate}
+        \item In the AGM, for ``KZG-like'' PCSs, evaluation binding implies extractability. The AGM may not be suitable for proving extractability.
+        \item Given an AGM proof of security, extending it to the AGMOS is partially automatized by our main theorem.
+    \end{enumerate}
 \end{itemize}
+\vfill
 Thank you for your attention.
+\end{frame}
+
+
+\begin{frame}
+\frametitle{References}
 \end{frame}
 
 
