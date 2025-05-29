@@ -107,9 +107,9 @@
 \begin{frame}
 \frametitle{Overview}
 \begin{itemize}
-    \item Polynomial Commitment Schemes (PCSs)
-    \item Algebraic Group Model (AGM)
-    \item Algebraic Group Model with Oblivious Sampling (AGMOS)
+    \item Polynomial Commitment Schemes (PCSs).
+    \item Algebraic Group Model (AGM).
+    \item Algebraic Group Model with Oblivious Sampling (AGMOS).
 \end{itemize}
 \end{frame}
 
@@ -199,26 +199,6 @@ Conclusion: the AGM is likely not suitable for proving extractability.
 
 \begin{frame}
 \frametitle{Algebraic Group Model with Oblivious Sampling (AGMOS)}
-\todo{todo: všechny úpravy zanést i do druhého slidu}
-\begin{itemize}
-    \item Lipmaa, Parisella, and Siim, 2023 [LPS23].
-    \item Oblivious sampling---e.g., using \emph{admissible encodings} [BF03, SW06].
-    \item Oracle $ \Oracle(\kappa, E, D) \to [q]_\kappa \in \G_\kappa $, $ \kappa \in \{ 1, 2 \} $.
-    \item \(
-    \A^{\red{\Oracle}}([\mathbb x_1]_1, [\mathbb x_2]_2) \to
-    ([\mathbb y_\kappa]_\kappa, \bm \gamma_\kappa, \red{\bm \delta_\kappa}, \red{[\mathbb q_\kappa]_\kappa})_{\kappa=1}^2
-    \), where $ \bm{\gamma}_\kappa $, $ \red{\bm{\delta}_\kappa} $ are matrices over $ \F_p $, and it holds that 
-    \begin{equation*}
-    \mathbb y_\kappa = \bm{\gamma}_\kappa \mathbb x_\kappa \red{\,+\, \bm \delta_\kappa \mathbb q_\kappa}, \quad 
-    \kappa \in \{ 1, 2 \}.
-    \end{equation*}
-\end{itemize}   
-\end{frame}
-
-
-\begin{frame}
-\frametitle{Algebraic Group Model with Oblivious Sampling (AGMOS)}
-\todo{todo: všechny úpravy zanést i do druhého slidu}
 \begin{itemize}
     \item Lipmaa, Parisella, and Siim, 2023 [LPS23].
     \item Oblivious sampling---e.g., using \emph{admissible encodings} [BF03, SW06].
@@ -345,7 +325,7 @@ Thank you for your attention.
 \end{frame}
 
 
-\begin{frame}
+\begin{frame}[noframenumbering]
 \frametitle{References}
 \begin{itemize}
     \item[{[}BF03{]}] Boneh, Dan; Franklin, Matthew K. Identity-Based Encryption from the Weil Pairing. SIAM J. Comput. 2003, vol. 32, no. 3, pp. 586–615.
@@ -356,9 +336,29 @@ Thank you for your attention.
 \end{frame}
 
 
-\begin{frame}
-\frametitle{???????????????????????????????????????????}
-    \todo{Reactions to opponent's review go here.}
+\begin{frame}[noframenumbering]
+\frametitle{Misprint in Figure 3.4}
+Incorrect:
+\[
+\bm v = 
+    \begin{pmatrix}
+        V^h(\bm x) \\
+        \bm{\delta}_1^T(\bm M_{21} + \bm M_{22} \bm \gamma_2) \mathbb x_2(\bm X) \\
+        \bm{\delta}_2^T(\bm M_{12}^T + \bm M_{22}^T \bm \gamma_1) \mathbb x_1(\bm X) \\
+        \vectorization(\bm \delta_2^T \bm M_{22}^T \bm \delta_1)
+    \end{pmatrix}.
+\]
+Correct:
+\[
+\bm v = 
+    \begin{pmatrix}
+        V^h(\bm x) \\
+        \bm{\delta}_1^T(\bm M_{21} + \bm M_{22} \bm \gamma_2) \mathbb x_2(\bm x) \\
+        \bm{\delta}_2^T(\bm M_{12}^T + \bm M_{22}^T \bm \gamma_1) \mathbb x_1(\bm x) \\
+        \vectorization(\bm \delta_2^T \bm M_{22}^T \bm \delta_1)
+    \end{pmatrix}.
+\]
+(Formal variables $ \bm X = (X_1, \dots, X_m) $, trapdoors $ \bm x \in \F_p^m $.)
 \end{frame}
 
 
